@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Unblocked Games Hub</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f6fa;
+      color: #2f3640;
+    }
+    header {
+      background: #3742fa;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.8rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    #content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .game-card {
+      width: 150px;
+      margin: 0.8rem;
+      cursor: pointer;
+      text-align: center;
+    }
+    .game-card img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .game-card p {
+      margin: 0.5rem 0 0;
+      font-size: 1rem;
+      color: #3742fa;
+    }
+    #game-viewer {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    #game-frame {
+      width: 80%;
+      height: 80%;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 0 16px rgba(0,0,0,0.5);
+    }
+    #close-btn {
+      position: absolute;
+      top: 10px; right: 20px;
+      background: #ff4757;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header>Unblocked Games Hub</header>
+  <div id="content"></div>
+
+  <div id="game-viewer">
+    <button id="close-btn">✕ Close</button>
+    <iframe id="game-frame" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    const content = document.getElementById('content');
+    const viewer = document.getElementById('game-viewer');
+    const iframe = document.getElementById('game-frame');
+    const closeBtn = document.getElementById('close-btn');
+
+    // ✅ Updated JSON URL (RAW version)
+    const jsonURL = 'https://raw.githubusercontent.com/swarmintelli/Unblocked-Games-CDN/main/games.json';
+
+    async function loadGames() {
+      try {
+        const resp = await fetch(jsonURL);
+        const games = await resp.json();
+
+        games.forEach(game => {
+          const card = document.createElement('div');
+          card.className = 'game-card';
+          card.innerHTML = `
+            <img src="${game.game_image_icon}" alt="${game.name}">
+            <p>${game.name}</p>
+          `;
+          card.addEventListener('click', () => playGame(game));
+          content.appendChild(card);
+        });
+      } catch (err) {
+        content.innerHTML = '<p>Failed to load games. Please try again later.</p>';
+        console.error('Error loading games:', err);
+      }
+    }
+
+    function playGame(game) {
+      iframe.src = game.iframe || game.game_url || '';
+      viewer.style.display = 'flex';
+    }
+
+    closeBtn.onclick = () => {
+      iframe.src = '';
+      viewer.style.display = 'none';
+    };
+
+    loadGames();
+  </script>
+</body>
+</html>
