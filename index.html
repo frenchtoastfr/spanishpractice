@@ -85,8 +85,9 @@
     const iframe = document.getElementById('game-frame');
     const closeBtn = document.getElementById('close-btn');
 
-    // ✅ Updated JSON URL (RAW version)
+    // ✅ Raw JSON URL + CDN prefix
     const jsonURL = 'https://raw.githubusercontent.com/swarmintelli/Unblocked-Games-CDN/main/games.json';
+    const cdnPrefix = 'https://swarmintelli.github.io/Unblocked-Games-CDN/';
 
     async function loadGames() {
       try {
@@ -110,7 +111,15 @@
     }
 
     function playGame(game) {
-      iframe.src = game.iframe || game.game_url || '';
+      let src = '';
+      if (game.iframe) {
+        // Add CDN prefix to relative iframe path
+        src = cdnPrefix + game.iframe.replace(/^\/+/, '');
+      } else if (game.game_url) {
+        src = game.game_url;
+      }
+
+      iframe.src = src;
       viewer.style.display = 'flex';
     }
 
